@@ -19,8 +19,11 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 
 class CountrySerializer(serializers.ModelSerializer):
-    currency = serializers.SlugRelatedField(queryset=Currency.objects.all(), slug_field="name")
-    continent = serializers.SlugRelatedField(queryset=Continent.objects.all(), slug_field="name")
+    continent = serializers.SlugRelatedField(
+        queryset=Continent.objects.all(), slug_field="name")
+    currency = serializers.SlugRelatedField(
+        queryset=Currency.objects.all(), slug_field="abbreviation")
+
     class Meta:
         model = Country
         fields = "__all__"
@@ -45,11 +48,29 @@ class CountrySerializer(serializers.ModelSerializer):
         return value
 
 
+class LGASerializer(serializers.ModelSerializer):
+    # state = serializers.SlugRelatedField(
+    #     queryset=State.objects.all(), slug_field="name")
+    class Meta:
+        model = LGA
+        fields = ["name"]
+
+    def validate_state(self, value):
+        try:
+            state = State.objects.get(name=value)
+        except State.DoesNotExist:
+            raise serializers.ValidationError({"message": "Invalid State"})
+        return value
+
+
 class StateSerializer(serializers.ModelSerializer):
-    country = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="name")
+    country = serializers.SlugRelatedField(
+        queryset=Country.objects.all(), slug_field="name")
+    lgas = LGASerializer(many=True, read_only=True, source="lga_set")
+
     class Meta:
         model = State
-        fields = "__all__"
+        fields = ["id", "name", "capital", "country", "lgas"]
 
     extra_kwargs = {
         "id": {"read_only": True}
@@ -62,19 +83,10 @@ class StateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"message": "Invalid Country"})
         return value
 
-
-class LGASerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = LGA
-        fields = ["name", "state"]
-
-    def validate_state(self, value):
-        try:
-            state = State.objects.get(name=value)
-        except State.DoesNotExist:
-            raise serializers.ValidationError({"message": "Invalid State"})
-        return value
+    def to_representation(self, instance):
+        ret = super(StateSerializer, self).to_representation(instance)
+        ret["lgas"] = [lga_data["name"] for lga_data in ret["lgas"]]
+        return ret
 
 
 class AddressSerializer(serializers.ModelSerializer):

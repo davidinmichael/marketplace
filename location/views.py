@@ -20,7 +20,7 @@ class CurrencyAddList(APIView, PageNumberPagination):
             return Response({"message": "No currency found."}, status.HTTP_404_NOT_FOUND)
         response = self.paginate_queryset(currencies, request, view=self)
         serializer = CurrencySerializer(response, many=True)
-        return self.get_paginated_response(serializer.data, status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = CurrencySerializer(data=request.data)
@@ -58,50 +58,40 @@ class StateList(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-# class CreateContinent(APIView):
-#     def get(self, request):
-#         nigeria = Country.objects.get(name="Nigeria")
-#         states = [
-#             {"name": "Abia", "capital": "Umuahia"},
-#             {"name": "Adamawa", "capital": "Yola"},
-#             {"name": "Akwa Ibom", "capital": "Uyo"},
-#             {"name": "Anambra", "capital": "Awka"},
-#             {"name": "Bauchi", "capital": "Bauchi"},
-#             {"name": "Bayelsa", "capital": "Yenagoa"},
-#             {"name": "Benue", "capital": "Makurdi"},
-#             {"name": "Borno", "capital": "Maiduguri"},
-#             {"name": "Cross River", "capital": "Calabar"},
-#             {"name": "Delta", "capital": "Asaba"},
-#             {"name": "Ebonyi", "capital": "Abakaliki"},
-#             {"name": "Edo", "capital": "Benin City"},
-#             {"name": "Ekiti", "capital": "Ado Ekiti"},
-#             {"name": "Enugu", "capital": "Enugu"},
-#             {"name": "Gombe", "capital": "Gombe"},
-#             {"name": "Imo", "capital": "Owerri"},
-#             {"name": "Jigawa", "capital": "Dutse"},
-#             {"name": "Kaduna", "capital": "Kaduna"},
-#             {"name": "Kano", "capital": "Kano"},
-#             {"name": "Katsina", "capital": "Katsina"},
-#             {"name": "Kebbi", "capital": "Birnin Kebbi"},
-#             {"name": "Kogi", "capital": "Lokoja"},
-#             {"name": "Kwara", "capital": "Ilorin"},
-#             {"name": "Lagos", "capital": "Ikeja"},
-#             {"name": "Nasarawa", "capital": "Lafia"},
-#             {"name": "Niger", "capital": "Minna"},
-#             {"name": "Ogun", "capital": "Abeokuta"},
-#             {"name": "Ondo", "capital": "Akure"},
-#             {"name": "Osun", "capital": "Oshogbo"},
-#             {"name": "Oyo", "capital": "Ibadan"},
-#             {"name": "Plateau", "capital": "Jos"},
-#             {"name": "Rivers", "capital": "Port Harcourt"},
-#             {"name": "Sokoto", "capital": "Sokoto"},
-#             {"name": "Taraba", "capital": "Jalingo"},
-#             {"name": "Yobe", "capital": "Damaturu"},
-#             {"name": "Zamfara", "capital": "Gusau"},
-#             {"name": "Federal Capital Territory", "capital": "Abuja"}
-#         ]
+class SingleState(APIView):
+    def get(self, request, pk):
+        state = State.objects.get(id=pk)
+        serializer = StateSerializer(state)
+        return Response(serializer.data, status.HTTP_200_OK)
 
-#         for state in states:
-#             State.objects.create(
-#                 name=state["name"], capital=state["capital"], country=nigeria)
-#         return Response("Created", status.HTTP_200_OK)
+
+class CreateLocation(APIView):
+    def get(self, request):
+        abia = State.objects.get(name="Adamawa")
+        states = [
+            "Demsa",
+            "Fufore",
+            "Ganye",
+            "Girei",
+            "Gombi",
+            "Guyuk",
+            "Hong",
+            "Jada",
+            "Lamurde",
+            "Madagali",
+            "Maiha",
+            "Mayo-Belwa",
+            "Michika",
+            "Mubi North",
+            "Mubi South",
+            "Numan",
+            "Shelleng",
+            "Song",
+            "Toungo",
+            "Yola North",
+            "Yola South"
+        ]
+
+        for i in range(len(states)):
+            LGA.objects.create(name=states[i], state=abia)
+        return Response("Created", status.HTTP_200_OK)
