@@ -6,20 +6,11 @@ from .models import *
 from .serializers import *
 
 
-class ContinentAddList(APIView):
+class ContinentList(APIView):
     def get(self, request):
         continents = Continent.objects.all()
         serializer = ContinentSerializer(continents, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
-
-    def post(self, request):
-        serializer = ContinentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Continent Created Successfully",
-                             "continent": serializer.data}, status.HTTP_201_CREATED)
-        return Response({"message": "Error creating continent",
-                         "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
 
 
 class CurrencyAddList(APIView, PageNumberPagination):
@@ -41,7 +32,7 @@ class CurrencyAddList(APIView, PageNumberPagination):
                          "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
 
 
-class CountryAddList(APIView):
+class CountryAddList(APIView, PageNumberPagination):
     def get(self, request):
         countries = Country.objects.all()
         if countries is None:
@@ -58,3 +49,18 @@ class CountryAddList(APIView):
                              "country": serializer.data}, status.HTTP_201_CREATED)
         return Response({"message": "Error creating country",
                          "errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
+
+# class CreateContinent(APIView):
+#     def get(self, request):
+#         continents = [
+#             {"name": "Africa", "abbreviation": "AF"},
+#             {"name": "Antarctica ", "abbreviation": "AN"},
+#             {"name": "Asia ", "abbreviation": "AS"},
+#             {"name": "Europe ", "abbreviation": "EU"},
+#             {"name": "North America ", "abbreviation": "NA"},
+#             {"name": "Australia (Oceania)", "abbreviation": "OC"},
+#             {"name": "South America", "abbreviation": "SA"},
+#         ]
+#         for continent in continents:
+#             Continent.objects.create(name=continent["name"], abbreviation=continent["abbreviation"])
+#         return Response("Created", status.HTTP_200_OK)
