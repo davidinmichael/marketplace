@@ -19,6 +19,8 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 
 class CountrySerializer(serializers.ModelSerializer):
+    currency = serializers.SlugRelatedField(queryset=Currency.objects.all(), slug_field="name")
+    continent = serializers.SlugRelatedField(queryset=Continent.objects.all(), slug_field="name")
     class Meta:
         model = Country
         fields = "__all__"
@@ -27,12 +29,12 @@ class CountrySerializer(serializers.ModelSerializer):
         "id": {"read_only": True}
     }
 
-    def validate_currency(self, value):
-        try:
-            currency = Currency.objects.get(abbreviation=value)
-        except Currency.DoesNotExist:
-            raise serializers.ValidationError({"message": "Invalid currency"})
-        return value
+    # def validate_currency(self, value):
+    #     try:
+    #         currency = Currency.objects.get(abbreviation=value)
+    #     except Currency.DoesNotExist:
+    #         raise serializers.ValidationError({"message": "Invalid currency"})
+    #     return value
 
     def validate_continent(self, value):
         try:
@@ -44,6 +46,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 class StateSerializer(serializers.ModelSerializer):
+    country = serializers.SlugRelatedField(queryset=Country.objects.all(), slug_field="name")
     class Meta:
         model = State
         fields = "__all__"

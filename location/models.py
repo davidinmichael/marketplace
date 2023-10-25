@@ -13,6 +13,9 @@ class Currency(models.Model):
     name = models.CharField(max_length=50, unique=True)
     abbreviation = models.CharField(max_length=10, unique=True)
 
+    def __str__(self):
+        return f"{self.name} | {self.abbreviation}"
+
 
 class Country(models.Model):
     name = models.CharField(max_length=100, unique=True)
