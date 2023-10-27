@@ -26,7 +26,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = "__all__"
+        fields = ["id", "name", "abbreviation", "capital", "currency", "continent"]
 
     extra_kwargs = {
         "id": {"read_only": True}
@@ -86,6 +86,7 @@ class StateSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super(StateSerializer, self).to_representation(instance)
         ret["lgas"] = [lga_data["name"] for lga_data in ret["lgas"]]
+        ret["total_lgas"] = len(ret["lgas"])
         return ret
 
 

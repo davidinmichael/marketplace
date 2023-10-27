@@ -53,7 +53,7 @@ class CountryAddList(APIView, PageNumberPagination):
 
 class StateList(APIView):
     def get(self, request):
-        state = State.objects.filter(country__name="Nigeria")
+        state = State.objects.filter(country__name="Nigeria").order_by("name")
         serializer = StateSerializer(state, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
@@ -65,33 +65,24 @@ class SingleState(APIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class CreateLocation(APIView):
-    def get(self, request):
-        abia = State.objects.get(name="Adamawa")
-        states = [
-            "Demsa",
-            "Fufore",
-            "Ganye",
-            "Girei",
-            "Gombi",
-            "Guyuk",
-            "Hong",
-            "Jada",
-            "Lamurde",
-            "Madagali",
-            "Maiha",
-            "Mayo-Belwa",
-            "Michika",
-            "Mubi North",
-            "Mubi South",
-            "Numan",
-            "Shelleng",
-            "Song",
-            "Toungo",
-            "Yola North",
-            "Yola South"
-        ]
+# class CreateLocation(APIView):
+#     def get(self, request):
+#         abia = State.objects.get(name="Zamfara")
+#         states = [
+#             "Anka",
+#             "Bakura",
+#             "Birnin Magaji/Kiyaw",
+#             "Bukkuyum",
+#             "Gummi",
+#             "Gusau",
+#             "Kaura Namoda",
+#             "Maradun",
+#             "Maru",
+#             "Shinkafi",
+#             "Talata Mafara",
+#             "Zurmi"
+#         ]
 
-        for i in range(len(states)):
-            LGA.objects.create(name=states[i], state=abia)
-        return Response("Created", status.HTTP_200_OK)
+#         for i in range(len(states)):
+#             LGA.objects.create(name=states[i], state=abia)
+#         return Response("Created", status.HTTP_200_OK)
